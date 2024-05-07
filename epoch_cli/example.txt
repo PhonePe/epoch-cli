@@ -1,0 +1,4 @@
+python3 epoch.py -f setting.ini -c stage topology get databuiilder_workflow_terminator
+python3 epoch.py -f setting.ini -c stage topology list
+python3 epoch.py -f setting.ini -c stage topology get-runs databuiilder_workflow_terminator
+source testingEpochCli/bin/activate
