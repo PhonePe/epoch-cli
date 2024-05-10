@@ -76,6 +76,20 @@ class EpochClient:
             raise EpochException(-1, "Error connecting to endpoint " + self.endpoint, raw={})
         return handle_epoch_response(response, expected_status)
 
+    def put(self, path: str, body: dict, parse=True, expected_status=200) -> dict:
+        try:
+            response = self.session.put(self.endpoint + path, json=body)
+        except requests.ConnectionError as e:
+            raise EpochException(-1, "Error connecting to endpoint " + self.endpoint, raw={})
+        return handle_epoch_response(response, expected_status)
+
+    def delete(self, path: str, body: dict, parse=True, expected_status=200) -> dict:
+        try:
+            response = self.session.delete(self.endpoint + path, json=body)
+        except requests.ConnectionError as e:
+            raise EpochException(-1, "Error connecting to endpoint " + self.endpoint, raw={})
+        return handle_epoch_response(response, expected_status)
+
 
 def handle_epoch_response(response: requests.Response, expected_status: int):
     status_code = response.status_code
@@ -121,19 +135,19 @@ def build_epoch_client(epoch_client: EpochClient, args: SimpleNamespace):
             try:
                 with open(config_file) as stream:
                     config_parser.read_string(stream.read())
-                drove_config = config_parser['DEFAULT']
+                epoch_config = config_parser['DEFAULT']
                 if args.cluster is not None:
                     if args.cluster in config_parser:
-                        drove_config = config_parser[args.cluster]
+                        epoch_config = config_parser[args.cluster]
                     else:
                         print("error: No cluster definition found for {cluster} in config {config_file}".format(
                             config_file=config_file, cluster=args.cluster))
                         return None
-                endpoint = drove_config.get("endpoint")
-                username = drove_config.get("username")
-                password = drove_config.get("password")
-                auth_header = drove_config.get("auth_header", None)
-                insecure = drove_config.get("insecure", False)
+                endpoint = epoch_config.get("endpoint")
+                username = epoch_config.get("username")
+                password = epoch_config.get("password")
+                auth_header = epoch_config.get("auth_header", None)
+                insecure = epoch_config.get("insecure", False)
             except Exception as e:
                 # Looks like some random file was passed. Bail out
                 print("Error parsing config file " + config_file + ": " + str(e))

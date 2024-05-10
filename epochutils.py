@@ -1,5 +1,6 @@
 import datetime
 import json
+from collections import OrderedDict
 import tabulate
 import time
 
@@ -35,3 +36,12 @@ def to_date(epoch: int) -> str:
 
 def now():
     return round(time.time() * 1000)
+
+def populate_topology_details(raw: json):
+    data = OrderedDict()
+    data["Id"] = raw["id"]
+    data["Topology"] = raw["topology"]
+    data["State"] = raw["state"]
+    data["Created"] = to_date(raw.get("created"))
+    data["Updated"] = to_date(raw.get("updated"))
+    return data
