@@ -31,11 +31,11 @@ class Applications(plugins.EpochPlugin):
         sub_parser.add_argument("task_id", metavar="task-id", help="Task ID")
         sub_parser.set_defaults(func=self.kill)
 
-        # sub_parser = commands.add_parser("log", help="Get the log for the task")
-        # sub_parser.add_argument("topology_id", metavar="topo-id", help="Topology ID")
-        # sub_parser.add_argument("run_id", metavar="run-id", help="Run ID")
-        # sub_parser.add_argument("task_id", metavar="task-id", help="Task ID")
-        # sub_parser.set_defaults(func=self.log)
+        sub_parser = commands.add_parser("log", help="Get the log for the task")
+        sub_parser.add_argument("topology_id", metavar="topo-id", help="Topology ID")
+        sub_parser.add_argument("run_id", metavar="run-id", help="Run ID")
+        sub_parser.add_argument("task_id", metavar="task-id", help="Task ID")
+        sub_parser.set_defaults(func=self.log)
 
         super().populate_options(epoch_client, parser)
 
@@ -55,7 +55,7 @@ class Applications(plugins.EpochPlugin):
                                                                    run_id=options.run_id))
         epochutils.print_dict(data)
 
-    # def log(self, options: SimpleNamespace):
-    #     data = self.epoch_client.get("/apis/v1/topologies/{topology_id}/runs/{run_id}/tasks/{task_id}/log".format(
-    #         topology_id=options.topology_id, run_id=options.run_id, task_id=options.task_id))
-    #     epochutils.print_dict(data)
+    def log(self, options: SimpleNamespace):
+        data = self.epoch_client.get("/apis/v1/topologies/{topology_id}/runs/{run_id}/tasks/{task_id}/log".format(
+            topology_id=options.topology_id, run_id=options.run_id, task_id=options.task_id))
+        epochutils.print_json(data)
