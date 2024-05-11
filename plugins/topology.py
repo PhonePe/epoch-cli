@@ -1,6 +1,4 @@
 import argparse
-import json
-from collections import OrderedDict
 
 import epochclient
 import plugins

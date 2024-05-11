@@ -2,12 +2,12 @@
 
 import argparse
 import traceback
-import epoch_cli
+import epochcli
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="epoch_cli")
-    parser.add_argument("--file", "-f", help="Configuration file for drove client")
+    parser.add_argument("--file", "-f", help="Configuration file for epoch client")
     parser.add_argument("--cluster", "-c", help="Cluster name as specified in config file")
     parser.add_argument("--endpoint", "-e", help="Epoch endpoint. (For example: https://epoch.test.com)")
     parser.add_argument("--auth-header", "-t", dest="auth_header",
@@ -22,7 +22,7 @@ def build_parser() -> argparse.ArgumentParser:
 def run():
     parser = build_parser()
     try:
-        client = epoch_cli.EpochCli(parser)
+        client = epochcli.EpochCli(parser)
         client.run()
     except (BrokenPipeError, IOError, KeyboardInterrupt):
         pass

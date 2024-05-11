@@ -60,7 +60,6 @@ class EpochClient:
         elif auth_header:
             self.session.auth = TokenAuth(auth_header)
 
-
     def get(self, path: str, expected_status=200) -> dict:
         try:
             response = self.session.get(self.endpoint + path)
@@ -68,22 +67,21 @@ class EpochClient:
             raise EpochException(-1, "Error connecting to endpoint " + self.endpoint, raw={})
         return handle_epoch_response(response, expected_status)
 
-
-    def post(self, path: str, body: dict, parse=True, expected_status=200) -> dict:
+    def post(self, path: str, body: dict, expected_status=200) -> dict:
         try:
             response = self.session.post(self.endpoint + path, json=body)
         except requests.ConnectionError as e:
             raise EpochException(-1, "Error connecting to endpoint " + self.endpoint, raw={})
         return handle_epoch_response(response, expected_status)
 
-    def put(self, path: str, body: dict, parse=True, expected_status=200) -> dict:
+    def put(self, path: str, body: dict, expected_status=200) -> dict:
         try:
             response = self.session.put(self.endpoint + path, json=body)
         except requests.ConnectionError as e:
             raise EpochException(-1, "Error connecting to endpoint " + self.endpoint, raw={})
         return handle_epoch_response(response, expected_status)
 
-    def delete(self, path: str, body: dict, parse=True, expected_status=200) -> dict:
+    def delete(self, path: str, body: dict, expected_status=200) -> dict:
         try:
             response = self.session.delete(self.endpoint + path, json=body)
         except requests.ConnectionError as e:
@@ -126,7 +124,7 @@ def build_epoch_client(epoch_client: EpochClient, args: SimpleNamespace):
     username = args.username
     password = args.password
     if endpoint is None:
-        config_file = None
+        config_file = str(Path.home()) + "/.epoch"
         if args.file is not None:
             config_file = args.file
         # Try to parse config if it exists and is readable
@@ -157,7 +155,7 @@ def build_epoch_client(epoch_client: EpochClient, args: SimpleNamespace):
             return None
     # At least endpoint is needed
     if endpoint == None:
-        raise Exception("Error: provide config file or required command line params for drove connectivity\n")
+        raise Exception("Error: provide config file or required command line params for epoch connectivity\n")
     endpoint = endpoint[:-1] if endpoint.endswith('/') else endpoint
     if args.debug:
         print(
