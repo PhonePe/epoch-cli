@@ -124,9 +124,9 @@ def build_epoch_client(epoch_client: EpochClient, args: SimpleNamespace):
     username = args.username
     password = args.password
     if endpoint is None:
-        config_file = str(Path.home()) + "/.epoch"
-        if args.file is not None:
-            config_file = args.file
+        # If cmdl options are not passed, see if config file is passed
+        # If config file path is not passed, see if .epoch exists in home and use that
+        config_file = args.file if args.file is not None else str(Path.home()) + "/.epoch"
         # Try to parse config if it exists and is readable
         if os.path.isfile(config_file) and os.access(config_file, os.R_OK):
             config_parser = configparser.ConfigParser()

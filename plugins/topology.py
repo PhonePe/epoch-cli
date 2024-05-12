@@ -2,7 +2,7 @@ import argparse
 
 import epochclient
 import plugins
-
+import json
 import epochutils
 from types import SimpleNamespace
 
@@ -39,8 +39,13 @@ class Applications(plugins.EpochPlugin):
         sub_parser.add_argument("topology_id", metavar="topo-id", help="Topology ID")
         sub_parser.set_defaults(func=self.delete)
 
-        sub_parser = commands.add_parser("Create", help="Create Topology on cluster")
+        sub_parser = commands.add_parser("create", help="Create Topology on cluster")
+        sub_parser.add_argument("spec_file", metavar="spec-file", help="JSON spec file for the application")
         sub_parser.set_defaults(func=self.create)
+
+        sub_parser = commands.add_parser("update", help="Update Topology on cluster")
+        sub_parser.add_argument("spec_file", metavar="spec-file", help="JSON spec file for the application")
+        sub_parser.set_defaults(func=self.update)
 
         super().populate_options(epoch_client, parser)
 
@@ -70,5 +75,19 @@ class Applications(plugins.EpochPlugin):
         epochutils.print_json(data)
 
     def create(self, options: SimpleNamespace):
-        data = self.epoch_client.delete("/apis/v1/topologies/{topology_id}".format(topology_id=options.topology_id), None)
-        epochutils.print_json(data)
+        try:
+            with open(options.spec_file, 'r') as fp:
+                spec = json.load(fp)
+            self.epoch_client.post("/apis/v1/topologies", spec)
+            print("Topology created : {topology_id}".format(topology_id=spec["name"]))
+        except (OSError, IOError) as e:
+            print("Error creating topology. Error: " + str(e))
+
+    def update(self, options: SimpleNamespace):
+        try:
+            with open(options.spec_file, 'r') as fp:
+                spec = json.load(fp)
+            self.epoch_client.put("/apis/v1/topologies", spec)
+            print("Topology updated : {topology_id}".format(topology_id=spec["name"]))
+        except (OSError, IOError) as e:
+            print("Error creating topology. Error: " + str(e))
