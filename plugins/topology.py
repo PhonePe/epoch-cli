@@ -51,8 +51,12 @@ class Applications(plugins.EpochPlugin):
 
     def list(self, options: SimpleNamespace):
         data = self.epoch_client.get("/apis/v1/topologies")
+        headers = ["Id", "Cron", "State", "CPU", "Memory","Created", "Updated"]
+        print("\t".join(headers))
         for app_data in data:
-            epochutils.print_dict(epochutils.populate_topology_highlights(app_data))
+            app_details = list(epochutils.populate_topology_highlights(app_data).values())
+            padding_map = {0: 60, 1: 20, 2: 6, 3: 5}
+            print("\t".join([str(val).ljust(padding_map.get(i, 10)) for i, val in enumerate(app_details)]))
 
     def run(self, options: SimpleNamespace):
         data = self.epoch_client.put("/apis/v1/topologies/{topology_id}/run".format(topology_id=options.topology_id), None)
