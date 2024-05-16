@@ -17,8 +17,6 @@ def print_dict(data: dict, level: int = 0):
                 print_dict(item, level + 1)
         else:
             print(f"{key: <30}{value}")
-    print()
-
 
 def print_json(data: dict):
     print(json.dumps(data, indent=4))
