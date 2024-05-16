@@ -52,7 +52,7 @@ class Applications(plugins.EpochPlugin):
     def list(self, options: SimpleNamespace):
         data = self.epoch_client.get("/apis/v1/topologies")
         for app_data in data:
-            epochutils.print_dict(epochutils.populate_topology_details(app_data))
+            epochutils.print_dict(epochutils.populate_topology_highlights(app_data))
 
     def run(self, options: SimpleNamespace):
         data = self.epoch_client.put("/apis/v1/topologies/{topology_id}/run".format(topology_id=options.topology_id), None)

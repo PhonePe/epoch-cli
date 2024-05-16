@@ -45,3 +45,18 @@ def populate_topology_details(raw: json):
     data["Created"] = to_date(raw.get("created"))
     data["Updated"] = to_date(raw.get("updated"))
     return data
+
+def populate_topology_highlights(raw: json):
+    data = OrderedDict()
+    data["Id"] = raw["id"]
+    data["Cron"] = raw["topology"].get("trigger").get("timeSpec")
+    data["State"] = raw["state"]
+    list_of_resources = raw["topology"].get("task").get("resources")
+    for resource in list_of_resources:
+        if(resource.get("type") == "CPU"):
+            data["CPU"] = resource.get("count")
+        elif(resource.get("type") == "MEMORY"):
+            data["Memory"] = resource.get("sizeInMB")
+    data["Created"] = to_date(raw.get("created"))
+    data["Updated"] = to_date(raw.get("updated"))
+    return data
