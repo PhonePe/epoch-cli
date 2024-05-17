@@ -2,6 +2,7 @@ import argparse
 
 import epochclient
 import plugins
+from collections import OrderedDict
 import json
 import epochutils
 from types import SimpleNamespace
@@ -51,31 +52,49 @@ class Applications(plugins.EpochPlugin):
 
     def list(self, options: SimpleNamespace):
         data = self.epoch_client.get("/apis/v1/topologies")
-        headers = ["Id", "Cron", "State", "CPU", "Memory","Created", "Updated"]
-        print("\t".join(headers))
+        headers = ["Id", "Cron", "State", "CPU", "Memory", "Created", "Updated"]
+        rows = []
         for app_data in data:
-            app_details = list(epochutils.populate_topology_highlights(app_data).values())
-            padding_map = {0: 60, 1: 20, 2: 6, 3: 5}
-            print("\t".join([str(val).ljust(padding_map.get(i, 10)) for i, val in enumerate(app_details)]))
+            row = [app_data["id"], app_data["topology"].get("trigger").get("timeSpec"), app_data["state"]]
+            list_of_resources = app_data["topology"].get("task").get("resources")
+            for resource in list_of_resources:
+                if resource.get("type") == "CPU":
+                    row.append(resource.get("count"))
+                elif resource.get("type") == "MEMORY":
+                    row.append(resource.get("sizeInMB"))
+            row.append(epochutils.to_date(app_data.get("created")))
+            row.append(epochutils.to_date(app_data.get("updated")))
+            rows.append(row)
+        epochutils.print_table(headers, rows)
 
     def run(self, options: SimpleNamespace):
-        data = self.epoch_client.put("/apis/v1/topologies/{topology_id}/run".format(topology_id=options.topology_id), None)
+        data = self.epoch_client.put("/apis/v1/topologies/{topology_id}/run".format(topology_id=options.topology_id),
+                                     None)
         epochutils.print_json(data)
 
     def get(self, options: SimpleNamespace):
         data = self.epoch_client.get("/apis/v1/topologies/{topology_id}".format(topology_id=options.topology_id))
-        epochutils.print_dict(epochutils.populate_topology_details(data))
+        app_data = OrderedDict()
+        app_data["Id"] = data["id"]
+        app_data["Topology"] = data["topology"]
+        app_data["State"] = data["state"]
+        app_data["Created"] = epochutils.to_date(data.get("created"))
+        app_data["Updated"] = epochutils.to_date(data.get("updated"))
+        epochutils.print_dict(app_data)
 
     def pause(self, options: SimpleNamespace):
-        data = self.epoch_client.put("/apis/v1/topologies/{topology_id}/pause".format(topology_id=options.topology_id), None)
+        data = self.epoch_client.put("/apis/v1/topologies/{topology_id}/pause".format(topology_id=options.topology_id),
+                                     None)
         epochutils.print_json(data)
 
     def unpause(self, options: SimpleNamespace):
-        data = self.epoch_client.put("/apis/v1/topologies/{topology_id}/unpause".format(topology_id=options.topology_id), None)
+        data = self.epoch_client.put(
+            "/apis/v1/topologies/{topology_id}/unpause".format(topology_id=options.topology_id), None)
         epochutils.print_json(data)
 
     def delete(self, options: SimpleNamespace):
-        data = self.epoch_client.delete("/apis/v1/topologies/{topology_id}".format(topology_id=options.topology_id), None)
+        data = self.epoch_client.delete("/apis/v1/topologies/{topology_id}".format(topology_id=options.topology_id),
+                                        None)
         epochutils.print_json(data)
 
     def create(self, options: SimpleNamespace):

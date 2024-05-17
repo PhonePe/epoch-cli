@@ -105,7 +105,7 @@ def handle_epoch_response(response: requests.Response, expected_status: int):
                              "Epoch call failed with status code: {code}, error: {message}".format(code=status_code,
                                                                                                    message=text),
                              api_response=api_response)
-    if api_response == None:
+    if api_response is None:
         raise EpochException(status_code, "Epoch call failed with status code: {code}".format(code=status_code))
 
     if "status" in api_response:
@@ -154,7 +154,7 @@ def build_epoch_client(epoch_client: EpochClient, args: SimpleNamespace):
             print("Error: Config file {config_file} is not present or readable".format(config_file=config_file))
             return None
     # At least endpoint is needed
-    if endpoint == None:
+    if endpoint is None:
         raise Exception("Error: provide config file or required command line params for epoch connectivity\n")
     endpoint = endpoint[:-1] if endpoint.endswith('/') else endpoint
     if args.debug:

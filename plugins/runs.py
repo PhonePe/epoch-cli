@@ -42,8 +42,13 @@ class Applications(plugins.EpochPlugin):
     def list(self, options: SimpleNamespace):
         data = self.epoch_client.get("/apis/v1/topologies/{topology_id}/runs".format(
             topology_id=options.topology_id))
+        headers = ["TopologyId", "RunId", "State", "runType", "Created", "Updated"]
+        rows = []
         for app_data in data:
-            epochutils.print_dict(app_data)
+            rows.append(
+                [app_data['topologyId'], app_data['runId'], app_data['state'], app_data['runType'], app_data['created'],
+                 app_data['updated']])
+        epochutils.print_table(headers, rows)
     def kill(self, options: SimpleNamespace):
         data = self.epoch_client.post("/apis/v1/topologies/{topology_id}/runs/{run_id}/tasks/{task_id}/kill".format(
             topology_id=options.topology_id, run_id=options.run_id, task_id=options.task_id), None)
