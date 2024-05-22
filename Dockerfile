@@ -23,6 +23,6 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 RUN mkdir epoch-cli
 COPY *.py epoch-cli/
-ADD plugins ./epoch-cli/plugins
+ADD epochplugins ./epoch-cli/epochplugins
 
 ENTRYPOINT ["python", "epoch-cli/epoch.py"]

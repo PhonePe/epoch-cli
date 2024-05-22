@@ -1,7 +1,7 @@
 import argparse
 from types import SimpleNamespace
 import epochclient
-from plugins import EpochPlugin
+from epochplugins import EpochPlugin
 
 
 class EpochCli:

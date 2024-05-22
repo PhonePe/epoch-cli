@@ -1,13 +1,13 @@
 import argparse
 
 import epochclient
-import plugins
+import epochplugins
 
 import epochutils
 from types import SimpleNamespace
 
 
-class Applications(plugins.EpochPlugin):
+class Applications(epochplugins.EpochPlugin):
     def __init__(self) -> None:
         pass
 
