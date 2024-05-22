@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "com.phonepe.infra.epoch_cli"
+version = "0.0.1a0"
+description = "Command line interface for Epoch task scheduler"
+authors = ["infra-dev <infra-dev@phonepe.com>"]
+readme = "README.md"
+packages = [{include = "plugins"}, {include = "*.py"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Requests = "2.31.0"
+tabulate = "0.9.0"
+tenacity = "8.2.3"
+urllib3 = "1.26.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+epoch = "epoch:run"
