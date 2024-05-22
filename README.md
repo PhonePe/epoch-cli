@@ -6,37 +6,10 @@ Command line interface for the Epoch Container Orchestrator.
 
 ## Installation
 
-### Create Virtual Environment
+You can install the cli from from PyPI.
 
 ```bash
-VENV_BASE_DIRECTORY=/path/to/base/directory/for/virtual/env
-cd ${VENV_BASE_DIRECTORY}
-python3 -m venv epoch_cli
-```
-
-### Activate Virtual Environment
-
-```bash
-cd ${VENV_BASE_DIRECTORY}/epoch_cli
-source bin/activate
-```
-
-### Install or Upgrade epoch_cli using Pip
-
-```bash
-# For installing/upgrading to latest snapshot version
-pip3 install --index https://artifactory.phonepe.com/repository/pypi-snapshots/simple --extra-index-url https://artifactory.phonepe.com/repository/pypi-org/simple --ignore-installed --force-reinstall --no-cache-dir com.phonepe.infra.epoch_cli
-
-# For installing/upgrading to latest release version
-pip3 install --index https://artifactory.phonepe.com/repository/pypi-releases/simple --extra-index-url https://artifactory.phonepe.com/repository/pypi-org/simple com.phonepe.infra.epoch_cli
-```
-
-After installation `epoch` command can be used as per user guide provided below. Once usage of `epoch` is done, virtual environment can be deactivated.
-
-### Deactivate Virtual Environment
-
-```bash
-deactivate
+pip install epoch-cli
 ```
 
 Reactivate/deactivate virtual environment based on the need to utilize epoch cli.

@@ -1,10 +1,28 @@
 [tool.poetry]
-name = "com.phonepe.infra.epoch_cli"
-version = "0.0.1a0"
+name = "epoch-cli"
+version = "0.0.1"
 description = "Command line interface for Epoch task scheduler"
-authors = ["infra-dev <infra-dev@phonepe.com>"]
+authors = [
+    "Shubhransh Jagota <mailtoshubhransh@gmail.com>",
+    "Tushar Naik <tushar.knaik@gmail.com>"
+]
+maintainers = [
+    "Tushar Naik <tushar.knaik@gmail.com>",
+    "Santanu Sinha <santanu.sinha@gmail.com>",
+    "Santanu Sinha <santanu@phonepe.com>",
+]
 readme = "README.md"
 packages = [{include = "plugins"}, {include = "*.py"}]
+license = "Apache-2.0"
+repository = "https://github.com/PhonePe/epoch-cli"
+keywords = ["container", "docker", "podman", "distributed-systems", "container-orchestrator"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Topic :: System :: Clustering",
+    "Topic :: System :: Distributed Computing"
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
