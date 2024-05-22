@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "epoch-cli"
-version = "0.0.1"
+version = "0.0.2"
 description = "Command line interface for Epoch task scheduler"
 authors = [
     "Shubhransh Jagota <mailtoshubhransh@gmail.com>",
