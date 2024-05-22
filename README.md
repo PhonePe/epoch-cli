@@ -224,7 +224,7 @@ epoch topology list [-h]
 Show details about topology-id
 
 ```
-drove topology get [-h] topology-id
+epoch topology get [-h] topology-id
 ```
 
 ###### Positional Arguments
@@ -351,25 +351,25 @@ epoch runs get [-h] topology-id run-id
 
 Kills the given taskid.
 ```
-epoch runs kill [-h] topology-id run-id task-id
+epoch runs kill [-h] topology-id run-id task-name
 ```
 ###### Positional Arguments
 
 `topology-id` - Topology-id 
 `run-id` - Run-id 
-`task-id` - Task-id to be killed
+`task-name` - Task-name to be killed
 
 ##### log
 
 gets the log the given taskid.
 ```
-epoch runs log [-h] topology-id run-id task-id
+epoch runs log [-h] topology-id run-id task-name
 ```
 ###### Positional Arguments
 
 `topology-id` - Topology-id 
 `run-id` - Run-id 
-`task-id` - Task-id to be fetched
+`task-name` - Task-name to be fetched
 
 
 ©2024, Shubhransh Jagota.
