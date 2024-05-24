@@ -14,6 +14,45 @@ pip install epoch-cli
 
 Reactivate/deactivate virtual environment based on the need to utilize epoch cli.
 
+## Running using docker
+The cli is pushed as a docker for easy access. This also elimintates the need for having python etc setup on your system.
+
+1) Pull the image:
+```shell
+docker pull ghcr.io/phonepe/epoch-cli:latest
+```
+
+2) Create a shell script called `epoch` with the following content:
+
+```shell
+#! /bin/sh
+docker run \
+    --rm --interactive --tty --network host \
+    --name epoch-cli -v ${HOME}/.epoch:/root/.epoch:ro  \
+    ghcr.io/phonepe/epoch-cli:latest "$@"
+
+```
+
+3) Make the script executable
+```shell
+chmod a+x epoch
+```
+
+4) Put the path to this script in your `~/.bashrc`.
+
+```shell
+export PATH="${PATH}:/path/to/your/script"
+```
+
+5) Logout/login or run `. ~/.bashrc` to load the new [path]
+
+
+6) Run epoch cli
+```
+epoch -h
+```
+
+
 ## Requirements
 The CLI is written in Python 3x
 
