@@ -12,7 +12,8 @@ You can install the cli from from PyPI.
 pip install epoch-cli
 ```
 
-Reactivate/deactivate virtual environment based on the need to utilize epoch cli.
+Reactivate/deactivate virtual environment based on the need to utilize epoch cli.  
+Refer [dev setup](#Setting-up-virtual-environment) on how to setup virtual environment and install epoch-cli.
 
 ## Running using docker
 The cli is pushed as a docker for easy access. This also elimintates the need for having python etc setup on your system.
@@ -383,5 +384,16 @@ epoch runs log [-h] topology-id run-id task-name
 `run-id` - Run-id 
 `task-name` - Task-name to be fetched
 
+## Setting-up virtual environment
+```
+python3 -m venv testingEpochCli
+cd testingEpochCli
+source bin/activate
+pip install epoch-cli
+```
+Move the setting.ini to the testingEpochCli directory and add auth tokens/username/passwords along with valid environments for different epoch endpoints.
+```
+epoch -f setting.ini -c env runs list job_name
+```
 
 ©2024, Shubhransh Jagota.
