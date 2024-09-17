@@ -30,7 +30,8 @@ class Applications(epochplugins.EpochPlugin):
         sub_parser.add_argument("--override", metavar="override_flag",
                                 help="For controlling overriding of the existing topologies", default=False)
         sub_parser.add_argument("--paused", metavar="paused", help="Load all paused topologies", default=False)
-        # sub_parser.add_argument("--override", metavar="p", help="Load all paused topologies", default=False)
+        sub_parser.add_argument("--skip", metavar="skipped topologies", help="Topologies to be skipped via loading",
+                                default=[], nargs="*")
 
         # sub_parser.add_argument('--override', action='override', help='Override existing topologies if the topology exists')
         # sub_parser.add_argument("run_id", metavar="run-id", help="Run ID")
@@ -53,23 +54,26 @@ class Applications(epochplugins.EpochPlugin):
         current_cluster_data = self.epoch_client.get("/apis/v1/topologies")
         json_data = epochutils.load_json(options.file_name)
         topologies_to_load = self.filter_topologies(current_cluster_data, json_data, options)
-        try:
-            for data in topologies_to_load:
+        for data in topologies_to_load:
+            try:
                 self.epoch_client.post("/apis/v1/topologies", data.get("topology"))
                 print("Topology created : {topology_id}".format(topology_id=data.get("name")))
-        except Exception as ex:
-            print("Error creating topology. Error: " + str(ex))
+            except Exception as ex:
+                print("Error creating topology. Error: " + str(ex))
 
     def filter_topologies(self, current_cluster_data, topologies_from_json, options: SimpleNamespace):
+        if len(options.skip) > 0:
+            topologies_from_json = [topology for topology in topologies_from_json if
+                                    topology.get('id') not in options.skip]
         if options.paused:
-            topologies_from_json = [topology for topology in topologies_from_json if topology.get('state') == "PAUSED"]
+            topologies_from_json = [topology for topology in topologies_from_json if
+                                    topology.get('state') == "PAUSED"]
         if not options.override:
             return topologies_from_json
         ids = set()
         for topology in topologies_from_json:
             ids.add(topology.get("id"))
         topologies_overriden = [topology for topology in current_cluster_data if (topology.get("id") in ids)]
-        print(topologies_overriden)
         for topology in topologies_overriden:
             data = self.epoch_client.delete("/apis/v1/topologies/{topology_id}".format(topology.get("id"), None))
             epochutils.print_json(data)
