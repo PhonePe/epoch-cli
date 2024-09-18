@@ -51,8 +51,8 @@ class Applications(epochplugins.EpochPlugin):
         for topology in data:
             try:
                 self.epoch_client.put("/apis/v1/topologies/{topology_id}/pause".format(topology_id=topology.get("id")),
-                                             None)
-                print("Topology created : {topology_id}".format(topology_id=topology.get("id")))
+                                      None)
+                print("Topology paused : {topology_id}".format(topology_id=topology.get("id")))
             except Exception as ex:
                 print("Error pausing topology. Error: " + str(ex))
 
@@ -65,33 +65,60 @@ class Applications(epochplugins.EpochPlugin):
     def import_topologies(self, options: SimpleNamespace):
         current_cluster_data = self.epoch_client.get("/apis/v1/topologies")
         json_data = epochutils.load_json(options.file_name)
-        topologies_to_load = self.filter_topologies(current_cluster_data, json_data, options)
-        for data in topologies_to_load:
-            try:
-                self.epoch_client.post("/apis/v1/topologies", data.get("topology"))
-                print("Topology created : {topology_id}".format(topology_id=data.get("name")))
-                if options.paused:
-                    self.epoch_client.put(
-                        "/apis/v1/topologies/{topology_id}/pause".format(topology_id=data.get("name")),
-                        None)
-            except Exception as ex:
-                print("Error creating topology. Error: " + str(ex))
+        filtered_topologies = self.filter_topologies(current_cluster_data, json_data, options)
+        topologies_to_overwrite = filtered_topologies.get("topologies_to_overwrite")
+        topologies_to_create = filtered_topologies.get("topologies_to_create")
+        self.overrwrite_topologies(options, topologies_to_overwrite)
+        self.create_topologies(options, topologies_to_create)
+
+    def create_topologies(self, options, topologies_to_create):
+        if topologies_to_create:
+            print(len(topologies_to_create))
+            for data in topologies_to_create:
+                try:
+                    self.epoch_client.post("/apis/v1/topologies", data.get("topology"))
+                    print("Topology created : {topology_id}".format(topology_id=data.get("name")))
+                    self.pause_topology(data, options)
+                except Exception as ex:
+                    print("Error creating topology. Error: " + str(ex))
+
+    def pause_topology(self, data, options):
+        if options.paused:
+            self.epoch_client.put(
+                "/apis/v1/topologies/{topology_id}/pause".format(topology_id=data.get("name")),
+                None)
+
+    def overrwrite_topologies(self, options, topologies_to_overwrite):
+        if topologies_to_overwrite:
+            print(len(topologies_to_overwrite))
+            for data in topologies_to_overwrite:
+                try:
+                    self.epoch_client.put("/apis/v1/topologies", data.get("topology"))
+                    print("Topology updated : {topology_id}".format(topology_id=data.get("name")))
+                    self.pause_topology(data, options)
+                except Exception as ex:
+                    print("Error updating topology. Error: " + str(ex))
 
     def filter_topologies(self, current_cluster_data, topologies_from_json, options: SimpleNamespace):
         skipped_topologies = options.skip.split(',')
+        filtered_topologies = {}
+        topologies_to_overwrite = []
+        topologies_to_create = []
         if len(skipped_topologies) > 0:
             topologies_from_json = [topology for topology in topologies_from_json if
                                     topology.get('id') not in skipped_topologies]
         if not options.overwrite:
-            return topologies_from_json
+            filtered_topologies["topologies_to_create"] = topologies_from_json
+            return filtered_topologies
         ids = set()
         for topology in topologies_from_json:
             ids.add(topology.get("id"))
-        topologies_overriden = [topology for topology in current_cluster_data if (topology.get("id") in ids)]
-        for topology in topologies_overriden:
-            try:
-                data = self.epoch_client.delete("/apis/v1/topologies/{topology_id}".format(topology.get("id"), None))
-                epochutils.print_json(data)
-            except Exception as ex:
-                print("Error deleting topology. Error: " + str(ex))
-        return topologies_from_json
+        overwritten_topologies_ids = [topology for topology in current_cluster_data if (topology.get("id") in ids)]
+        for topology in topologies_from_json:
+            if topology.get("id") in overwritten_topologies_ids:
+                topologies_to_overwrite.append(topology)
+            else:
+                topologies_to_create.append(topology)
+        filtered_topologies["topologies_to_overwrite"] = topologies_to_overwrite
+        filtered_topologies["topologies_to_create"] = topologies_to_create
+        return filtered_topologies
