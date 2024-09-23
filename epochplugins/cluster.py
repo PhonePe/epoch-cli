@@ -73,31 +73,29 @@ class Applications(epochplugins.EpochPlugin):
 
     def create_topologies(self, options, topologies_to_create):
         if topologies_to_create:
-            print(len(topologies_to_create))
             for data in topologies_to_create:
                 try:
                     self.epoch_client.post("/apis/v1/topologies", data.get("topology"))
-                    print("Topology created : {topology_id}".format(topology_id=data.get("name")))
+                    print("Topology created : {topology_id}".format(topology_id=data.get("id")))
                     self.pause_topology(data, options)
                 except Exception as ex:
-                    print("Error creating topology. Error: " + str(ex))
+                    print("Error creating topology " + data.get("id") + " Error: " + str(ex))
 
     def pause_topology(self, data, options):
         if options.paused:
             self.epoch_client.put(
-                "/apis/v1/topologies/{topology_id}/pause".format(topology_id=data.get("name")),
+                "/apis/v1/topologies/{topology_id}/pause".format(topology_id=data.get("id")),
                 None)
 
     def overrwrite_topologies(self, options, topologies_to_overwrite):
         if topologies_to_overwrite:
-            print(len(topologies_to_overwrite))
             for data in topologies_to_overwrite:
                 try:
                     self.epoch_client.put("/apis/v1/topologies", data.get("topology"))
-                    print("Topology updated : {topology_id}".format(topology_id=data.get("name")))
+                    print("Topology updated : {topology_id}".format(topology_id=data.get("id")))
                     self.pause_topology(data, options)
                 except Exception as ex:
-                    print("Error updating topology. Error: " + str(ex))
+                    print("Error updating topology " + data.get("id") + " Error: " + str(ex))
 
     def filter_topologies(self, current_cluster_data, topologies_from_json, options: SimpleNamespace):
         skipped_topologies = options.skip.split(',')
@@ -113,7 +111,8 @@ class Applications(epochplugins.EpochPlugin):
         ids = set()
         for topology in topologies_from_json:
             ids.add(topology.get("id"))
-        overwritten_topologies_ids = [topology for topology in current_cluster_data if (topology.get("id") in ids)]
+        overwritten_topologies_ids = [topology.get("id") for topology in current_cluster_data if
+                                      (topology.get("id") in ids)]
         for topology in topologies_from_json:
             if topology.get("id") in overwritten_topologies_ids:
                 topologies_to_overwrite.append(topology)
