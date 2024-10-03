@@ -3,7 +3,7 @@ import argparse
 import epochclient
 import epochplugins
 import json
-
+from epochplugins.filter_topologies import FilteredTopologies
 from types import SimpleNamespace
 
 import epochutils
@@ -66,8 +66,8 @@ class Applications(epochplugins.EpochPlugin):
         current_cluster_data = self.epoch_client.get("/apis/v1/topologies")
         json_data = epochutils.load_json(options.file_name)
         filtered_topologies = self.filter_topologies(current_cluster_data, json_data, options)
-        topologies_to_overwrite = filtered_topologies.get("topologies_to_overwrite")
-        topologies_to_create = filtered_topologies.get("topologies_to_create")
+        topologies_to_overwrite = filtered_topologies.topologies_to_overwrite
+        topologies_to_create = filtered_topologies.topologies_to_create
         self.overrwrite_topologies(options, topologies_to_overwrite)
         self.create_topologies(options, topologies_to_create)
 
@@ -97,27 +97,28 @@ class Applications(epochplugins.EpochPlugin):
                 except Exception as ex:
                     print("Error updating topology " + data.get("id") + " Error: " + str(ex))
 
-    def filter_topologies(self, current_cluster_data, topologies_from_json, options: SimpleNamespace):
+    def filter_topologies(self, current_cluster_data, topologies_from_json,
+                          options: SimpleNamespace) -> FilteredTopologies:
+        filtered_topologies = FilteredTopologies()
         skipped_topologies = options.skip.split(',')
-        filtered_topologies = {}
-        topologies_to_overwrite = []
-        topologies_to_create = []
+
         if len(skipped_topologies) > 0:
             topologies_from_json = [topology for topology in topologies_from_json if
                                     topology.get('id') not in skipped_topologies]
+
         if not options.overwrite:
-            filtered_topologies["topologies_to_create"] = topologies_from_json
+            for topology in topologies_from_json:
+                filtered_topologies.add_to_create_topology(topology)
             return filtered_topologies
-        ids = set()
-        for topology in topologies_from_json:
-            ids.add(topology.get("id"))
-        overwritten_topologies_ids = [topology.get("id") for topology in current_cluster_data if
-                                      (topology.get("id") in ids)]
+
+        ids = set(topology.get("id") for topology in topologies_from_json)
+        overwritten_topologies_ids = {topology.get("id") for topology in current_cluster_data if
+                                      topology.get("id") in ids}
+
         for topology in topologies_from_json:
             if topology.get("id") in overwritten_topologies_ids:
-                topologies_to_overwrite.append(topology)
+                filtered_topologies.add_to_overwrite_topology(topology)
             else:
-                topologies_to_create.append(topology)
-        filtered_topologies["topologies_to_overwrite"] = topologies_to_overwrite
-        filtered_topologies["topologies_to_create"] = topologies_to_create
+                filtered_topologies.add_to_create_topology(topology)
+
         return filtered_topologies
