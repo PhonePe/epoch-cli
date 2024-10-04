@@ -16,9 +16,12 @@ Reactivate/deactivate virtual environment based on the need to utilize epoch cli
 Refer [dev setup](#Developer-setup) on how to setup virutal environment and install epoch-cli.
 
 ## Running using docker
-The cli is pushed as a docker for easy access. This also elimintates the need for having python etc setup on your system.
+
+The cli is pushed as a docker for easy access. This also elimintates the need for having python etc setup on your
+system.
 
 1) Pull the image:
+
 ```shell
 docker pull ghcr.io/phonepe/epoch-cli:latest
 ```
@@ -35,6 +38,7 @@ docker run \
 ```
 
 3) Make the script executable
+
 ```shell
 chmod a+x epoch
 ```
@@ -49,19 +53,22 @@ export PATH="${PATH}:/path/to/your/script"
 
 
 6) Run epoch cli
+
 ```
 epoch -h
 ```
 
-
 ## Requirements
+
 The CLI is written in Python 3x
 
-
 ## Accessing the Documentation
-The arguments needed by the script are self documenting. Please use `-h` or `--help` in different sections and sub-sections of the CLI to get descriptions of commands, sub-commands, their arguments and options.
+
+The arguments needed by the script are self documenting. Please use `-h` or `--help` in different sections and
+sub-sections of the CLI to get descriptions of commands, sub-commands, their arguments and options.
 
 To see basic help:
+
 ```
 
 $ epoch -h
@@ -97,14 +104,18 @@ options:
 
 # Connecting to the Epoch cluster
 
-In order to use the CLI, we need to provide coordinates to the cluster to connect to. This can be done in the following manner:
+In order to use the CLI, we need to provide coordinates to the cluster to connect to. This can be done in the following
+manner:
 
 ## Epoch CLI config file
+
 The config file can be located in the following paths:
+
 * `.epoch` file in your home directory (Typically used for the default cluster you frequently connect to)
-*  A file in any path that can be passed as a parameter to the CLI with the `-f FILE` option
+* A file in any path that can be passed as a parameter to the CLI with the `-f FILE` option
 
 ### Config File format
+
 This file is in ini format and is arranged in sections.
 
 ```ini
@@ -129,13 +140,16 @@ auth_header = %(prod_token)s
 ..
 ```
 
-The `DEFAULT` section can be used to define common variables like Insecure etc. The `local`, `stage`, `production` etc are names for inidividual clusters and these sections can be used to define configuration for individual clusters. Cluster name is referred to in the command line by using the `-c` command line option.\
+The `DEFAULT` section can be used to define common variables like Insecure etc. The `local`, `stage`, `production` etc
+are names for inidividual clusters and these sections can be used to define configuration for individual clusters.
+Cluster name is referred to in the command line by using the `-c` command line option.\
 *Interpolation* of values is supported and can be acieved by using `%(variable_name)s` references.
 
 > * Note: The `DEFAULT` section is mandatory
 > * Note: The `s` at the end of `%(var)s` is mandatory for interpolation
 
 ### Contents of a Section
+
 ```
 endpoint = https://yourcluster.yourdomain.com # Endpoint for cluster
 insecure = true
@@ -145,11 +159,14 @@ auth_header= <Authorization value here if using header based auth>
 ```
 
 Authentication priority:
+
 * If both `username` and `password` are provided, basic auth is used.
-* If a value is provided in the `auth_header` parameter, it is passed as the value for the `Authorization` header in the upstream HTTP calls to the Epoch server verbatim.
+* If a value is provided in the `auth_header` parameter, it is passed as the value for the `Authorization` header in the
+  upstream HTTP calls to the Epoch server verbatim.
 * If neither, no auth is set
 
-> NOTE: Use the `insecure` option to skip certificate checks on the server endpoint (comes in handy for internal domains)
+> NOTE: Use the `insecure` option to skip certificate checks on the server endpoint (comes in handy for internal
+> domains)
 
 To use a custom config file, invoke epoch in the following form:
 
@@ -169,24 +186,29 @@ This will connect to the cluster whose config is mentioned in the `[stage]` conf
 $ epoch -c stage ...
 ```
 
-This will connect to the cluster whose config is mentioned in the `[stage]` config section in `$HOME/.epoch` config file.
-
+This will connect to the cluster whose config is mentioned in the `[stage]` config section in `$HOME/.epoch` config
+file.
 
 ## Command line options
-Pass the endpoint and other options using `--endpoint|-e` etc etc. Options can be obtained using `-h` as mentioned above. Invocation will be in the form:
+
+Pass the endpoint and other options using `--endpoint|-e` etc etc. Options can be obtained using `-h` as mentioned
+above. Invocation will be in the form:
 
 ```
 $ epoch -e http://localhost:10000 -u guest -p guest ...
 ```
 
 ## CLI format
+
 The following cli format is followed:
 
 ```
 usage: epoch [-h] [--file FILE] [--cluster CLUSTER] [--endpoint ENDPOINT] [--auth-header AUTH_HEADER] [--insecure INSECURE] [--username USERNAME] [--password PASSWORD] [--debug]
              {cluster,runs,topology} ...
 ```
+
 ### Basic Arguments
+
 ```
   -h, --help            show this help message and exit
   --file FILE, -f FILE  Configuration file for epoch client
@@ -207,14 +229,17 @@ usage: epoch [-h] [--file FILE] [--cluster CLUSTER] [--endpoint ENDPOINT] [--aut
 ```
 
 ## Commands
+
 Commands in epoch are meant to address specific functionality. They can be summarized as follows:
+
 ```
     cluster             Epoch cluster related commands
     runs                Epoch runs related commands
     topology            Epoch topology related commands
 ```
+
 ---
- Topology
+Topology
 ---
 Epoch topology executor related commands
 
@@ -251,6 +276,7 @@ Run the given topology-id
 ```
 epoch topology run [-h] topology-id
 ```
+
 ###### Positional Arguments
 
 `topology-id` - Topology-id to be run
@@ -258,9 +284,11 @@ epoch topology run [-h] topology-id
 ##### create
 
 Create a task on cluster
+
 ```
 epoch topology create [-h] spec-file
 ```
+
 ###### Positional Arguments
 
 `spec-file` - JSON spec file for the topology
@@ -284,6 +312,7 @@ Pause the given topology-id
 ```
 epoch topology pause [-h] topology-id
 ```
+
 ###### Positional Arguments
 
 `topology-id` - Topology-id to be paused
@@ -295,6 +324,7 @@ Unpause the given topology-id
 ```
 epoch topology unpause [-h] topology-id
 ```
+
 ###### Positional Arguments
 
 `topology-id` - Topology-id to be unpaused
@@ -306,6 +336,7 @@ Delete the given topology-id
 ```
 epoch topology delete [-h] topology-id
 ```
+
 ###### Positional Arguments
 
 `topology-id` - Topology-id to be deleted
@@ -322,13 +353,51 @@ epoch cluster [-h] {leader} ...
 
 #### Sub-commands
 
-
 ##### leader
 
 Show leader for cluster
+
 ```
 epoch cluster leader [-h]
 ```
+
+##### pause-all
+
+Pause all topologies for cluster
+
+```
+epoch cluster pause-all
+```
+
+##### import
+
+Import topologies for cluster
+
+```
+epoch cluster import [-h] file_name
+```
+
+###### Positional Arguments
+
+`file_name` - Name of file to be imported
+
+`--overwrite` True/False - Overwrite topologies that already exist (default: False)
+
+`--paused` True/False- Pause all jobs while importing (default: False)
+
+`--skip`- Comma seperated list of jobs to be skipped (default: "")
+
+##### export
+
+Export topologies for cluster
+
+```
+epoch cluster export [-h] file_name
+```
+
+###### Positional Arguments
+
+`file_name` - Name of file to be saved
 
 ---
 
@@ -339,6 +408,7 @@ Epoch application related commands
 ```
 epoch runs [-h] {list,get,kill,log} ...
 ```
+
 #### Sub-commands
 
 ##### list
@@ -352,9 +422,11 @@ epoch runs list [-h]
 ##### get
 
 get the details for the given Topology's runId
+
 ```
 epoch runs get [-h] topology-id run-id
 ```
+
 ###### Positional Arguments
 
 `topology-id` - Topology-id
@@ -363,35 +435,43 @@ epoch runs get [-h] topology-id run-id
 ##### kill
 
 Kills the given taskid.
+
 ```
 epoch runs kill [-h] topology-id run-id task-name
 ```
+
 ###### Positional Arguments
 
-`topology-id` - Topology-id 
-`run-id` - Run-id 
+`topology-id` - Topology-id
+`run-id` - Run-id
 `task-name` - Task-name to be killed
 
 ##### log
 
 gets the log the given taskid.
+
 ```
 epoch runs log [-h] topology-id run-id task-name
 ```
+
 ###### Positional Arguments
 
-`topology-id` - Topology-id 
-`run-id` - Run-id 
+`topology-id` - Topology-id
+`run-id` - Run-id
 `task-name` - Task-name to be fetched
 
-## Developer-setup 
+## Developer-setup
+
 ```
 python3 -m venv testingEpochCli
 cd testingEpochCli
 source bin/activate
 pip install epoch-cli
 ```
-Move the setting.ini to the testingEpochCli directory and add your valid olympus tokens along with valid stage and prod urls.
+
+Move the setting.ini to the testingEpochCli directory and add your valid olympus tokens along with valid stage and prod
+urls.
+
 ```
 epoch -f setting.ini -c stage runs list job_name
 ```
