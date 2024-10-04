@@ -2,7 +2,7 @@ import datetime
 import json
 import tabulate
 import time
-
+import os
 
 def print_dict(data: dict, level: int = 0):
     for key, value in data.items():
@@ -39,3 +39,15 @@ def to_date(epoch: int) -> str:
 
 def now():
     return round(time.time() * 1000)
+
+
+def load_json(file_path):
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+
+    try:
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+        return data
+    except json.JSONDecodeError as e:
+        raise JsonLoadError(f"Error decoding JSON from file {file_path}: {e}")
