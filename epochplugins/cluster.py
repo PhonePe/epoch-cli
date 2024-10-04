@@ -26,7 +26,7 @@ class Applications(epochplugins.EpochPlugin):
         sub_parser.set_defaults(func=self.export_topologies)
 
         sub_parser = commands.add_parser("import", help="load the topologies to the given cluster")
-        sub_parser.add_argument("-file_name", metavar="file-name", help="Name of file to be loaded")
+        sub_parser.add_argument("file_name", metavar="file-name", help="Name of file to be loaded")
         sub_parser.add_argument("--overwrite", metavar="overwrite_flag",
                                 help="Set this, if you wish to overwrite topologies that already exist, during the import",
                                 default=False)
