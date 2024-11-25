@@ -1,0 +1,6 @@
+#! /bin/sh
+
+docker run \
+    --rm --interactive --tty --network host \
+    --name epoch-cli -v ${HOME}/.epoch:/root/.epoch:ro  \
+    ghcr.io/phonepe/epoch-cli:latest "$@"
