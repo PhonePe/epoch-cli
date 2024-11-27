@@ -26,15 +26,10 @@ system.
 docker pull ghcr.io/phonepe/epoch-cli:latest
 ```
 
-2) Create a shell script called `epoch` with the following content:
+2) Download the `epoch` shell script using the following command:
 
 ```shell
-#! /bin/sh
-docker run \
-    --rm --interactive --tty --network host \
-    --name epoch-cli -v ${HOME}/.epoch:/root/.epoch:ro  \
-    ghcr.io/phonepe/epoch-cli:latest "$@"
-
+wget https://raw.github.com/PhonePe/epoch-cli/master/epoch
 ```
 
 3) Make the script executable
@@ -473,3 +468,4 @@ epoch -f setting.ini -c env runs list job_name
 ```
 
 ©2024, Shubhransh Jagota.
+
